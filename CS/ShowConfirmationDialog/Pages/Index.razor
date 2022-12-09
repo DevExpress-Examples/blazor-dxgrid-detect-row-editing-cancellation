@@ -1,0 +1,94 @@
+﻿@page "/"
+
+@using ShowConfirmationDialog.Data
+@inject WeatherForecastService ForecastService
+
+<DxGrid Data="forecasts" EditMode="GridEditMode.EditRow" EditModelSaving="OnEditModelSaving" CssClass="mw-1100">
+    <Columns>
+        <DxGridCommandColumn NewButtonVisible="false" DeleteButtonVisible="false">
+            <CellDisplayTemplate>
+                <DxButton Click="() => OnEditClick(context)" Text="Edit" RenderStyle="ButtonRenderStyle.Link" />
+            </CellDisplayTemplate>
+        </DxGridCommandColumn>
+        <DxGridDataColumn Caption="Date" FieldName="Date">
+            <CellEditTemplate>
+                @{
+                    if (context.EditContext.IsModified())
+                        hasUnsavedChanges = true;
+                    <DxDateEdit @bind-Date="((WeatherForecast)context.EditModel).Date" />
+                }
+            </CellEditTemplate>
+        </DxGridDataColumn>
+        <DxGridDataColumn Caption="Temperature (C)" FieldName="TemperatureC">
+            <CellEditTemplate>
+                @{
+                    if (context.EditContext.IsModified())
+                        hasUnsavedChanges = true;
+                    <DxSpinEdit @bind-Value="((WeatherForecast)context.EditModel).TemperatureC" />
+                }
+            </CellEditTemplate>
+        </DxGridDataColumn>
+    </Columns>        
+</DxGrid>
+
+<DxPopup Visible="IsPopupVisible" HeaderText="Warning" ShowCloseButton="true" ShowFooter="true" Closed="OnClosed">
+    <BodyContentTemplate>
+        Your data is modified. Do you want to save the changes?
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <DxButton CssClass="dialog-button" RenderStyle="ButtonRenderStyle.Primary" Text="Yes" Click="YesClick" />
+        <DxButton CssClass="dialog-button" RenderStyle="ButtonRenderStyle.Secondary" Text="No" Click="NoClick" />
+    </FooterContentTemplate>
+</DxPopup>
+
+@code {
+    bool IsPopupVisible = false;
+    bool hasUnsavedChanges = false;
+    TaskCompletionSource<bool?> tcs;
+    List<WeatherForecast>? forecasts;
+
+    protected override async Task OnInitializedAsync() {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now.AddDays(-2));
+    }
+
+    async Task OnEditClick(GridColumnCellDisplayTemplateContext context) {
+        if (context.Grid.IsEditing() && hasUnsavedChanges) {
+            bool? result = await ShowPopup();
+            if (result == true)
+                await context.Grid.SaveChangesAsync();
+        }
+        await context.Grid.StartEditDataItemAsync(context.DataItem);
+    }
+
+    Task<bool?> ShowPopup() {
+        IsPopupVisible = true;
+        tcs = new TaskCompletionSource<bool?>();
+        tcs.Task.ContinueWith(_ => {
+            IsPopupVisible = false;
+        });
+        return tcs.Task;
+    }
+
+    private void YesClick() {
+        tcs.SetResult(true);
+    }
+
+    private void NoClick() {
+        tcs.SetResult(false);
+        hasUnsavedChanges = false;
+    }
+
+    private void OnClosed() {
+        if (!tcs.Task.IsCompleted)
+            tcs.SetResult(null);
+    }
+
+    void OnEditModelSaving(GridEditModelSavingEventArgs e) {
+        WeatherForecast dataItem = e.DataItem as WeatherForecast;
+        WeatherForecast editModel = e.EditModel as WeatherForecast;
+        dataItem.Date = editModel.Date;
+        dataItem.TemperatureC = editModel.TemperatureC;
+        hasUnsavedChanges = false;
+        e.Grid.Reload();
+    }
+}
