@@ -32,33 +32,33 @@
     </Columns>
 </DxGrid>
 
-<DxPopup Visible="IsPopupVisible" HeaderText="Warning" ShowCloseButton="true" ShowFooter="true" CloseButtonClick="Popup_CloseButtonClick">
+<DxPopup @bind-Visible="IsPopupVisible" HeaderText="Warning" ShowCloseButton="true" ShowFooter="true" Closed="Popup_Closed">
     <BodyContentTemplate>
-        Your data is modified. Do you want to save the changes?
+        Your data item has been modified. Do you want to save your changes?
     </BodyContentTemplate>
     <FooterContentTemplate>
-        <DxButton CssClass="dialog-button" RenderStyle="ButtonRenderStyle.Primary" Text="Yes" Click="ButtonYes_Click" />
-        <DxButton CssClass="dialog-button" RenderStyle="ButtonRenderStyle.Secondary" Text="No" Click="ButtonNo_Click" />
+        <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="Save" Click="ButtonSave_Click" />
+        <DxButton RenderStyle="ButtonRenderStyle.Secondary" Text="Cancel" Click="ButtonCancel_Click" />
     </FooterContentTemplate>
 </DxPopup>
 
 @code {
     List<WeatherForecast> Forecasts { get; set; }
     IGrid Grid { get; set; }
-        
+
     EditContext _gridEditContext;
     EditContext GridEditContext {
         get { return Grid.IsEditing() ? _gridEditContext : null; }
         set { _gridEditContext = value; }
     }
-        
+
     object SavedDataItem { get; set; }
     bool IsPopupVisible { get; set; }
-        
+
     protected override async Task OnInitializedAsync() {
         Forecasts = await ForecastService.GetForecastAsync(DateTime.Now.AddDays(-2));
     }
-        
+
     async Task GridEditButton_Click(GridColumnCellDisplayTemplateContext context) {
         if(context.Grid.IsEditing() && GridEditContext.IsModified()) {
             SavedDataItem = context.DataItem;
@@ -66,29 +66,24 @@
         } else
             await context.Grid.StartEditDataItemAsync(context.DataItem);
     }
-        
+
     void Grid_EditModelSaving(GridEditModelSavingEventArgs e) {
         var dataItem = (WeatherForecast)e.DataItem;
         var editModel = (WeatherForecast)e.EditModel;
         dataItem.Date = editModel.Date;
         dataItem.TemperatureC = editModel.TemperatureC;
     }
-        
-    async Task ButtonYes_Click() {
+
+    async Task ButtonSave_Click() {
         await Grid.SaveChangesAsync();
-        await StartEditSavedItem();
-    }
-        
-    async Task ButtonNo_Click() {
-        await StartEditSavedItem();
-    }
-        
-    async Task Popup_CloseButtonClick() {
-        await StartEditSavedItem();
-    }
-        
-    async Task StartEditSavedItem() {
         IsPopupVisible = false;
+    }
+
+    async Task ButtonCancel_Click() {
+        IsPopupVisible = false;
+    }
+        
+    async Task Popup_Closed() {
         await Grid.StartEditDataItemAsync(SavedDataItem);
         SavedDataItem = null;
     }
