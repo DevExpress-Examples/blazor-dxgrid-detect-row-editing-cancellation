@@ -84,7 +84,9 @@
     }
         
     async Task Popup_Closed() {
-        await Grid.StartEditDataItemAsync(SavedDataItem);
-        SavedDataItem = null;
+        if(SavedDataItem != null) {
+            await Grid.StartEditDataItemAsync(SavedDataItem);
+            SavedDataItem = null;
+        }
     }
 }
