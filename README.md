@@ -4,7 +4,7 @@
 <!-- default badges end -->
 # Grid for Blazor - How to display a confirmation dialog when users start editing another row without saving changes
 
-This example illustrates how to show a confirmation dialog when users switch to editing another row in the [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/grid) without saving changes they made. This dialog allows users to save or discard the pending changes.
+This example illustrates how to show a confirmation dialog when users start editing another row in the [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/grid) without saving changes they made. This dialog allows users to save or discard the pending changes.
 
 ![Confirmation Dialog](confirmation-dialog.gif)
 
