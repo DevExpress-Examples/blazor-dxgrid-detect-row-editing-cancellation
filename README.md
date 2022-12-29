@@ -1,4 +1,5 @@
 <!-- default badges list -->
+![](https://img.shields.io/endpoint?url=https://codecentral.devexpress.com/api/v1/VersionRange/576256387/22.2.3%2B)
 [![](https://img.shields.io/badge/Open_in_DevExpress_Support_Center-FF7200?style=flat-square&logo=DevExpress&logoColor=white)](https://supportcenter.devexpress.com/ticket/details/T1132900)
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 <!-- default badges end -->
@@ -14,7 +15,7 @@ The Grid discards all unsaved changes if a user starts editing a grid row while 
 
 1. Configure the Grid component to allow users to edit grid data. Refer to the following help topic for more information: [Edit Data and Validate Input](https://docs.devexpress.com/Blazor/403454/grid/edit-data-and-validate-input).
 
-2. Add the [Popup](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxPopup) component that includes the custom **Save** and **Cancel** buttons. In response to a click on the **Cancel** button, set the DxPopup's [Visible](http://docs.devexpress.devx/Blazor/DevExpress.Blazor.DxPopupBase.Visible) property to `false` to close the pop-up window. When a user clicks **Save**, call the DxGrid's [SaveChangesAsync](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.SaveChangesAsync) method to save the changes and close the pop-up window.
+2. Add the [Popup](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxPopup) component that includes the custom **Save** and **Cancel** buttons. In response to a click on the **Cancel** button, set the DxPopup's [Visible](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxPopupBase.Visible) property to `false` to close the pop-up window. When a user clicks **Save**, call the DxGrid's [SaveChangesAsync](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.SaveChangesAsync) method to save the changes and close the pop-up window.
 
 3. Use the command column's [CellDisplayTemplate](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGridCommandColumn.CellDisplayTemplate) property to replace the built-in **Edit** button with a custom button. When a user clicks the custom button, check whether the component data [was modified](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.forms.editcontext.ismodified?view=aspnetcore-7.0). Show the pop-up window if the Grid component has unsaved changes; otherwise, start editing the clicked row.  
  
