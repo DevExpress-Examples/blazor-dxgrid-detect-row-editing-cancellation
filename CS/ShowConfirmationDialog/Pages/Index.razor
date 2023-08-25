@@ -32,14 +32,14 @@
     </Columns>
 </DxGrid>
 
-<DxPopup @bind-Visible="IsPopupVisible" HeaderText="Warning" ShowCloseButton="true" ShowFooter="true" Closed="Popup_Closed">
+<DxPopup @bind-Visible="IsPopupVisible" HeaderText="Modify a Record" ShowCloseButton="true" Closed="Popup_Closed">
     <BodyContentTemplate>
-        Your data item has been modified. Do you want to save your changes?
+        <p>Your data item has been modified. Do you want to save your changes?</p>
+        <div class="confirmation-dialog-content">
+            <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="Yes" Click="ButtonSave_Click" />
+            <DxButton RenderStyle="ButtonRenderStyle.Secondary" Text="No" Click="ButtonCancel_Click" />
+        </div>
     </BodyContentTemplate>
-    <FooterContentTemplate>
-        <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="Save" Click="ButtonSave_Click" />
-        <DxButton RenderStyle="ButtonRenderStyle.Secondary" Text="Cancel" Click="ButtonCancel_Click" />
-    </FooterContentTemplate>
 </DxPopup>
 
 @code {
