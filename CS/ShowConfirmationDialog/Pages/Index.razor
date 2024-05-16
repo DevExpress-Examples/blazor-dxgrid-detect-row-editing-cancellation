@@ -59,7 +59,7 @@
         Forecasts = await ForecastService.GetForecastAsync(DateTime.Now.AddDays(-2));
     }
 
-    async Task GridEditButton_Click(GridColumnCellDisplayTemplateContext context) {
+    async Task GridEditButton_Click(GridCommandColumnCellDisplayTemplateContext context) {
         if(context.Grid.IsEditing() && GridEditContext.IsModified()) {
             SavedDataItem = context.DataItem;
             IsPopupVisible = true;
