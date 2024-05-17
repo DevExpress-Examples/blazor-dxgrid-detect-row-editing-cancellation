@@ -13,22 +13,8 @@
                 <DxButton Click="() => GridEditButton_Click(context)" Text="Edit" RenderStyle="ButtonRenderStyle.Link" />
             </CellDisplayTemplate>
         </DxGridCommandColumn>
-        <DxGridDataColumn Caption="Date" FieldName="Date">
-            <CellEditTemplate>
-                @{
-                    GridEditContext = context.EditContext;
-                }
-                <DxDateEdit @bind-Date="((WeatherForecast)context.EditModel).Date" />
-            </CellEditTemplate>
-        </DxGridDataColumn>
-        <DxGridDataColumn Caption="Temperature (C)" FieldName="TemperatureC">
-            <CellEditTemplate>
-                @{
-                    GridEditContext = context.EditContext;
-                }
-                <DxSpinEdit @bind-Value="((WeatherForecast)context.EditModel).TemperatureC" />
-            </CellEditTemplate>
-        </DxGridDataColumn>
+        <DxGridDataColumn Caption="Date" FieldName="Date" />
+        <DxGridDataColumn Caption="Temperature (C)" FieldName="TemperatureC" />
     </Columns>
 </DxGrid>
 
@@ -46,12 +32,6 @@
     List<WeatherForecast> Forecasts { get; set; }
     IGrid Grid { get; set; }
 
-    EditContext _gridEditContext;
-    EditContext GridEditContext {
-        get { return Grid.IsEditing() ? _gridEditContext : null; }
-        set { _gridEditContext = value; }
-    }
-
     object SavedDataItem { get; set; }
     bool IsPopupVisible { get; set; }
 
@@ -60,7 +40,7 @@
     }
 
     async Task GridEditButton_Click(GridCommandColumnCellDisplayTemplateContext context) {
-        if(context.Grid.IsEditing() && GridEditContext.IsModified()) {
+        if (context.Grid.IsEditing() && context.Grid.GetEditContext().IsModified()) {
             SavedDataItem = context.DataItem;
             IsPopupVisible = true;
         } else
