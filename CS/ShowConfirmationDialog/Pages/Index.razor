@@ -48,10 +48,7 @@
     }
 
     void Grid_EditModelSaving(GridEditModelSavingEventArgs e) {
-        var dataItem = (WeatherForecast)e.DataItem;
-        var editModel = (WeatherForecast)e.EditModel;
-        dataItem.Date = editModel.Date;
-        dataItem.TemperatureC = editModel.TemperatureC;
+        e.CopyChangesToDataItem();
     }
 
     async Task ButtonSave_Click() {

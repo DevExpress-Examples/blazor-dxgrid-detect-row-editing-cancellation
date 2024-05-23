@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.Blazor" Version="24.1.2" />
+    <PackageReference Include="DevExpress.Blazor" Version="24.1.2-beta" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
