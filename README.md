@@ -16,11 +16,81 @@ The Grid discards all unsaved changes if a user starts editing a grid row while 
 
 1. Configure the Grid component to allow users to edit grid data. Refer to the following help topic for more information: [Edit Data and Validate Input](https://docs.devexpress.com/Blazor/403454/grid/edit-data-and-validate-input).
 
+    ```
+    <DxGrid @ref="Grid" Data="Forecasts"
+            EditMode="GridEditMode.EditRow"
+            EditModelSaving="Grid_EditModelSaving"
+            CssClass="mw-1100">
+        <Columns>...</Columns>
+    </DxGrid>
+  
+     @code {
+         void Grid_EditModelSaving(GridEditModelSavingEventArgs e) {
+             e.CopyChangesToDataItem();
+         }
+     }
+    ```
+
 2. Add the [Popup](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxPopup) component that includes the custom **Save** and **Cancel** buttons. In response to a click on the **Cancel** button, set the DxPopup's [Visible](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxPopupBase.Visible) property to `false` to close the pop-up window. When a user clicks **Save**, call the DxGrid's [SaveChangesAsync](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.SaveChangesAsync) method to save the changes and close the pop-up window.
 
+    ```
+    <DxPopup @bind-Visible="IsPopupVisible" HeaderText="Modify a Record" ShowCloseButton="true" Closed="Popup_Closed">
+        <BodyContentTemplate>
+            <p>Your data item has been modified. Do you want to save your changes?</p>
+            <div class="confirmation-dialog-content">
+                <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="Yes" Click="ButtonSave_Click" />
+                <DxButton RenderStyle="ButtonRenderStyle.Secondary" Text="No" Click="ButtonCancel_Click" />
+            </div>
+        </BodyContentTemplate>
+    </DxPopup>
+    
+    @code {
+        async Task ButtonSave_Click() {
+            await Grid.SaveChangesAsync();
+            IsPopupVisible = false;
+        }
+        async Task ButtonCancel_Click() {
+            IsPopupVisible = false;
+        }
+    }
+    ```
+
 3. Use the command column's [CellDisplayTemplate](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGridCommandColumn.CellDisplayTemplate) property to replace the built-in **Edit** button with a custom button. When a user clicks the custom button, check whether the component data [was modified](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.forms.editcontext.ismodified?view=aspnetcore-7.0). Show the pop-up window if the Grid component has unsaved changes; otherwise, start editing the clicked row.  
- 
+
+    ```
+    <DxGrid ...>
+        <Columns>
+            <DxGridCommandColumn NewButtonVisible="false" DeleteButtonVisible="false">
+                <CellDisplayTemplate>
+                    <DxButton Click="() => GridEditButton_Click(context)" Text="Edit" RenderStyle="ButtonRenderStyle.Link" />
+                </CellDisplayTemplate>
+            </DxGridCommandColumn>
+            <DxGridDataColumn Caption="Date" FieldName="Date" />
+            <DxGridDataColumn Caption="Temperature (C)" FieldName="TemperatureC" />
+        </Columns>
+    </DxGrid>
+    
+    @code {
+        async Task GridEditButton_Click(GridCommandColumnCellDisplayTemplateContext context) {
+            if (context.Grid.IsEditing() && context.Grid.GetEditContext().IsModified()) {
+                SavedDataItem = context.DataItem;
+                IsPopupVisible = true;
+            } else
+                await context.Grid.StartEditDataItemAsync(context.DataItem);
+        }
+    }
+    ```
+
 4. Once the pop-up window [closes](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxPopupBase.Closed), start editing the clicked row.
+
+    ```
+    async Task Popup_Closed() {
+        if(SavedDataItem != null) {
+            await Grid.StartEditDataItemAsync(SavedDataItem);
+            SavedDataItem = null;
+        }
+    }
+    ```
 
 ## Files to Review
 
@@ -30,6 +100,7 @@ The Grid discards all unsaved changes if a user starts editing a grid row while 
 
 - [Bind the Grid to Data](https://docs.devexpress.com/Blazor/403737/grid/bind-to-data)
 - [Edit Grid Data and Validate Input](https://docs.devexpress.com/Blazor/403454/grid/edit-data-and-validate-input)
+- [Confirmation Dialog Based on DevExpress Blazor Message Box](https://docs.devexpress.com/Blazor/404497/components/dialogs-and-windows/confirmation-dialog)
 
 ## More Examples
 
